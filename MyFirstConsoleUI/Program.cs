@@ -13,22 +13,19 @@ namespace MyFirstConsoleUI
     {
         static void Main(string[] args)
         {
-            CarManager carManager = new CarManager(new EfCarDal());
-          
 
-            foreach (var c in carManager.GetCarDetails())
-            {
-                Console.WriteLine(c.Name + "/" + c.ColorName + "/" + c.Description + "/" + c.DailyPrice  );
-                
-            }
 
-            BrandManager brandManager = new BrandManager(new EfBrandDal());
-            
-            foreach (var b in brandManager.GetAll())
+            RentalManager rentalManager = new RentalManager(new EfRentalDal());
+            var result = rentalManager.Update(new Rental()
             {
-                Console.WriteLine(b.Name);
-                
-            }
+                Id = 2, CarId = 15, CustomerId = 7, RentDate = new DateTime(2023, 02, 18),
+                ReturnDate = new DateTime(2023, 02, 27)
+            });
+            Console.WriteLine(result.Message);
+
+
+
+
 
 
 

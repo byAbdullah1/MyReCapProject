@@ -5,6 +5,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Business.Abstract;
+using Business.Constant;
+using Core.Utilities;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
@@ -23,34 +25,38 @@ namespace Business.Concrete
         }
         
 
-        public void Add(Brand brand)
+        public IResult Add(Brand brand)
         {
             //iş kodları
             _brandDal.Add(brand);
-            
+            return new SuccessResult(Messages.BrandAdded);
+
         }
 
-        public void Delete(Brand brand)
+        public IResult Delete(Brand brand)
         {
             
             //iş kodları
             _brandDal.Delete(brand);
+            return new SuccessResult(Messages.BrandDeleted);
         }
 
-        public Brand GetById(int id)
+        public IDataResult<Brand> GetById(int id)
         {
-            return _brandDal.Get(b=> b.Id == id);
+            return new SuccessDataResult<Brand>(_brandDal.Get(b => b.Id == id));
         }
 
-        public List<Brand> GetAll()
+        public IDataResult<List<Brand>> GetAll()
         {
-            return _brandDal.GetAll();
+            return new SuccessDataResult<List<Brand>>(_brandDal.GetAll());
         }
 
-        public void Update(Brand brand)
+        public IResult Update(Brand brand)
         {
             //iş kodları
             _brandDal.Update(brand);
+            return new SuccessResult(Messages.BrandUpdated);
+
         }
     }
 }

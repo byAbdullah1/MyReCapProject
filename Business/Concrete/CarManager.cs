@@ -3,9 +3,12 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Business.Constant;
+using Core.Utilities;
 using Entities.DTOs;
 
 namespace Business.Concrete
@@ -20,40 +23,63 @@ namespace Business.Concrete
            _carDal = carDal;
        }
 
-       public List<Car> GetAll() 
-        {
-            return _carDal.GetAll();
-        }
-        public void Add(Car car)
-        {
-            if (car.Description.Length >= 2 && car.DailyPrice > 0)
-            {
-                _carDal.Add(car);
-            }
-            else
-            {
-                Console.WriteLine("Araba açıklamasını ve günlük kiralama fiyatını kontrol ediniz.");
-            }
-        }
 
-        public void Update(Car car)
-        {
-            _carDal.Update(car);
-        }
+       public IDataResult<List<Car>> GetAll()
+       {
+           if (DateTime.Now.Hour == 22)
+           {
+               return new ErrorDataResult<List<Car>>(Messages.GetAllInvalidMessage);
+           }
 
-        public void Delete(Car car)
-        {
-            _carDal.Delete(car);
-        }
+           
+           return new SuccessDataResult<List<Car>>(_carDal.GetAll(),Messages.GetAllMessage);
+       }
 
-        public Car GetById(int id )
-        {
-            return _carDal.Get(c => c.Id == id);
-        }
+       public IResult Add(Car car)
+       {
+           if (car.Name.Length<2)
+           {
+               return new ErrorResult(Messages.AddedInvalidMessage);
+           }
+           _carDal.Add(car);
+           return new SuccessResult(Messages.AddedMessage);
+       }
 
-        public List<CarDetailsDto> GetCarDetails()
-        {
-            return _carDal.GetCarDetails();
-        }
+       public IResult Update(Car car)
+       {
+           if (car.Name.Length<2)
+           {
+               return new ErrorResult(Messages.UpdatedInvalidMessage);
+           }
+           _carDal.Update(car);
+           return new SuccessResult(Messages.UpdatedMessage);
+
+       }
+
+       public IResult Delete(Car car)
+       {
+           _carDal.Delete(car);
+           return new SuccessResult(Messages.DeletedMessage);
+       }
+
+       public IDataResult<Car> GetById(int id)
+       {
+           return new SuccessDataResult<Car>(_carDal.Get(c => c.Id==id));
+       }
+
+       public IDataResult<List<CarDetailsDto>> GetCarDetails()
+       {
+           return new SuccessDataResult<List<CarDetailsDto>>(_carDal.GetCarDetails());
+       }
+
+       public IDataResult<List<Car>> GetAllColorId(int colorId)
+       {
+           return new SuccessDataResult<List<Car>>(_carDal.GetAll(c => c.ColorId == colorId));
+       }
+
+       public IDataResult<List<Car>> GetAllBrandId(int brandId)
+       {
+           return new SuccessDataResult<List<Car>>(_carDal.GetAll(c => c.BrandId == brandId));
+       }
     }
 }
